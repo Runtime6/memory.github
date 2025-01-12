@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Párkereső Játék</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #FCB7D0
+;
+            margin: 0;
+            padding: 0;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(5, 100px);
+            gap: 10px;
+            justify-content: center;
+            margin-top: 50px;
+        }
+
+        .card {
+            width: 100px;
+            height: 100px;
+            background-color: #FF89BF;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .card.flipped {
+            background-color: #ffffff;
+            color: #000000;
+            cursor: default;
+        }
+
+        .hidden {
+            visibility: hidden;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: green;
+        }
+
+        .timer {
+            margin-top: 10px;
+            font-size: 20px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Párkereső Játék</h1>
+    <div class="timer" id="timer">Idő: 60 mp</div>
+    <div class="game-container" id="gameContainer"></div>
+    <div class="message" id="message"></div>
+
+    <script>
+        const symbols = ['🐶', '🐱', '🦁', '🐯', '🐸', '🐵', '🐧', '🐦', '🐠', '🐢', 
+                         '🐶', '🐱', '🦁', '🐯', '🐸', '🐵', '🐧', '🐦', '🐠', '🐢'];
+        let shuffledSymbols = symbols.sort(() => Math.random() - 0.5);
+        let firstCard = null;
+        let secondCard = null;
+        let lockBoard = false;
+        let matchesFound = 0;
+        let timeLeft = 60;
+        let timerInterval;
+
+        const gameContainer = document.getElementById('gameContainer');
+        const message = document.getElementById('message');
+        const timer = document.getElementById('timer');
+
+        function createCard(symbol) {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.dataset.symbol = symbol;
+            card.addEventListener('click', flipCard);
+            return card;
+        }
+
+        function initializeGame() {
+            shuffledSymbols.forEach(symbol => {
+                const card = createCard(symbol);
+                gameContainer.appendChild(card);
+            });
+            startTimer();
+        }
+
+        function flipCard() {
+            if (lockBoard || this === firstCard || this.classList.contains('flipped')) return;
+
+            this.textContent = this.dataset.symbol;
+            this.classList.add('flipped');
+
+            if (!firstCard) {
+                firstCard = this;
+                return;
+            }
+
+            secondCard = this;
+            checkMatch();
+        }
+
+        function checkMatch() {
+            lockBoard = true;
+
+            if (firstCard.dataset.symbol === secondCard.dataset.symbol) {
+                disableCards();
+                matchesFound++;
+
+                if (matchesFound === symbols.length / 2) {
+                    clearInterval(timerInterval);
+                    message.textContent = 'Gratulálok! Minden párt megtaláltál!';
+                }
+            } else {
+                unflipCards();
+            }
+        }
+
+        function disableCards() {
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+
+            resetBoard();
+        }
+
+        function unflipCards() {
+            setTimeout(() => {
+                firstCard.textContent = '';
+                secondCard.textContent = '';
+
+                firstCard.classList.remove('flipped');
+                secondCard.classList.remove('flipped');
+
+                resetBoard();
+            }, 1000);
+        }
+
+        function resetBoard() {
+            [firstCard, secondCard, lockBoard] = [null, null, false];
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timer.textContent = `Idő: ${timeLeft} mp`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function endGame() {
+            lockBoard = true;
+            message.textContent = 'Sajnos nem sikerült!';
+        }
+
+        initializeGame();
+    </script>
+</body>
+</html>
