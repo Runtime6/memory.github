@@ -32,7 +32,7 @@
             font-size: 24px;
             border-radius: 10px;
             cursor: pointer;
-            pointer-events: none; /* Disabled by default */
+            pointer-events: none; 
         }
 
         .card.flipped {
@@ -112,7 +112,7 @@
         }
 
         function initializeGame() {
-            clearInterval(timerInterval); // Ensure the timer is cleared
+            clearInterval(timerInterval); 
             shuffledSymbols = symbols.sort(() => Math.random() - 0.5);
             firstCard = null;
             secondCard = null;
@@ -206,14 +206,14 @@
         restartButton.addEventListener('click', () => {
             restartButton.style.display = 'none';
             startButton.style.display = 'inline-block';
-            initializeGame(); // Resets the game without starting the timer
+            initializeGame(); 
         });
 
         startButton.addEventListener('click', () => {
             startButton.style.display = 'none';
             restartButton.style.display = 'inline-block';
             Array.from(gameContainer.children).forEach(card => card.style.pointerEvents = "auto");
-            startTimer(); // Starts the timer only when "Start" is clicked
+            startTimer(); 
         });
 
         initializeGame();
