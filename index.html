@@ -8,8 +8,7 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #FCB7D0
-;
+            background-color: #FCB7D0;
             margin: 0;
             padding: 0;
         }
@@ -60,6 +59,32 @@
             font-size: 20px;
             color: red;
         }
+
+        .restart-button, .start-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .restart-button {
+            background-color: red;
+        }
+
+        .restart-button:hover {
+            background-color: darkred;
+        }
+
+        .start-button {
+            background-color: green;
+        }
+
+        .start-button:hover {
+            background-color: darkgreen;
+        }
     </style>
 </head>
 <body>
@@ -67,21 +92,19 @@
     <div class="timer" id="timer">Idő: 60 mp</div>
     <div class="game-container" id="gameContainer"></div>
     <div class="message" id="message"></div>
+    <button class="start-button" id="startButton">Indítás</button>
+    <button class="restart-button" id="restartButton">Újraindítás</button>
 
     <script>
         const symbols = ['🐶', '🐱', '🦁', '🐯', '🐸', '🐵', '🐧', '🐦', '🐠', '🐢', 
                          '🐶', '🐱', '🦁', '🐯', '🐸', '🐵', '🐧', '🐦', '🐠', '🐢'];
-        let shuffledSymbols = symbols.sort(() => Math.random() - 0.5);
-        let firstCard = null;
-        let secondCard = null;
-        let lockBoard = false;
-        let matchesFound = 0;
-        let timeLeft = 60;
-        let timerInterval;
+        let shuffledSymbols, firstCard, secondCard, lockBoard, matchesFound, timeLeft, timerInterval;
 
         const gameContainer = document.getElementById('gameContainer');
         const message = document.getElementById('message');
         const timer = document.getElementById('timer');
+        const restartButton = document.getElementById('restartButton');
+        const startButton = document.getElementById('startButton');
 
         function createCard(symbol) {
             const card = document.createElement('div');
@@ -92,11 +115,21 @@
         }
 
         function initializeGame() {
+            shuffledSymbols = symbols.sort(() => Math.random() - 0.5);
+            firstCard = null;
+            secondCard = null;
+            lockBoard = false;
+            matchesFound = 0;
+            timeLeft = 60;
+
+            gameContainer.innerHTML = '';
             shuffledSymbols.forEach(symbol => {
                 const card = createCard(symbol);
                 gameContainer.appendChild(card);
             });
-            startTimer();
+
+            message.textContent = '';
+            timer.textContent = `Idő: ${timeLeft} mp`;
         }
 
         function flipCard() {
@@ -154,6 +187,7 @@
         }
 
         function startTimer() {
+            clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 timeLeft--;
                 timer.textContent = `Idő: ${timeLeft} mp`;
@@ -169,6 +203,17 @@
             lockBoard = true;
             message.textContent = 'Sajnos nem sikerült!';
         }
+
+        restartButton.addEventListener('click', () => {
+            initializeGame();
+            startTimer();
+        });
+
+        startButton.addEventListener('click', () => {
+            startButton.style.display = 'none';
+            initializeGame();
+            startTimer();
+        });
 
         initializeGame();
     </script>
