@@ -41,10 +41,6 @@
             cursor: default;
         }
 
-        .hidden {
-            visibility: hidden;
-        }
-
         h1 {
             margin-top: 20px;
         }
@@ -116,6 +112,7 @@
         }
 
         function initializeGame() {
+            clearInterval(timerInterval); // Ensure the timer is cleared
             shuffledSymbols = symbols.sort(() => Math.random() - 0.5);
             firstCard = null;
             secondCard = null;
@@ -209,15 +206,14 @@
         restartButton.addEventListener('click', () => {
             restartButton.style.display = 'none';
             startButton.style.display = 'inline-block';
-            initializeGame();
+            initializeGame(); // Resets the game without starting the timer
         });
 
         startButton.addEventListener('click', () => {
             startButton.style.display = 'none';
             restartButton.style.display = 'inline-block';
-            initializeGame();
             Array.from(gameContainer.children).forEach(card => card.style.pointerEvents = "auto");
-            startTimer();
+            startTimer(); // Starts the timer only when "Start" is clicked
         });
 
         initializeGame();
