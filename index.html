@@ -32,6 +32,7 @@
             font-size: 24px;
             border-radius: 10px;
             cursor: pointer;
+            pointer-events: none; /* Disabled by default */
         }
 
         .card.flipped {
@@ -93,7 +94,7 @@
     <div class="game-container" id="gameContainer"></div>
     <div class="message" id="message"></div>
     <button class="start-button" id="startButton">Indítás</button>
-    <button class="restart-button" id="restartButton">Újraindítás</button>
+    <button class="restart-button" id="restartButton" style="display: none;">Újraindítás</button>
 
     <script>
         const symbols = ['🐶', '🐱', '🦁', '🐯', '🐸', '🐵', '🐧', '🐦', '🐠', '🐢', 
@@ -130,6 +131,7 @@
 
             message.textContent = '';
             timer.textContent = `Idő: ${timeLeft} mp`;
+            Array.from(gameContainer.children).forEach(card => card.style.pointerEvents = "none");
         }
 
         function flipCard() {
@@ -205,13 +207,16 @@
         }
 
         restartButton.addEventListener('click', () => {
+            restartButton.style.display = 'none';
+            startButton.style.display = 'inline-block';
             initializeGame();
-            startTimer();
         });
 
         startButton.addEventListener('click', () => {
             startButton.style.display = 'none';
+            restartButton.style.display = 'inline-block';
             initializeGame();
+            Array.from(gameContainer.children).forEach(card => card.style.pointerEvents = "auto");
             startTimer();
         });
 
